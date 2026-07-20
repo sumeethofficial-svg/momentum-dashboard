@@ -10,8 +10,17 @@ import { AIBriefing } from "@/components/momentum/AIBriefing";
 import { CreateGoalModal } from "@/components/momentum/CreateGoalModal";
 import { AIRiskSheet, type InspectTarget } from "@/components/momentum/AIRiskSheet";
 import { CommandPalette } from "@/components/momentum/CommandPalette";
+import { WeeklySummaryDialog } from "@/components/momentum/WeeklySummaryDialog";
 import { MomentumProvider, useMomentum } from "@/components/momentum/MomentumContext";
 import { AnalyticsView, AssistantView, SettingsView } from "@/components/momentum/Views";
+import { useAuth } from "@/hooks/useAuth";
+
+function greetingPrefix() {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 18) return "Good afternoon";
+  return "Good evening";
+}
 
 export const Route = createFileRoute("/_authenticated/")({
   component: Page,
