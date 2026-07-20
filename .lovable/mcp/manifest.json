@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://xyrmejlbupeusdrehhkx.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "momentum-ai-mcp",
+      "version": "0.1.0",
+      "title": "Momentum AI"
+    },
+    "tools": [
+      {
+        "name": "list_goals",
+        "title": "List my goals",
+        "description": "Return the signed-in Momentum user's active goals with title, category, priority, target date, progress, risk, and AI insight.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "priority": {
+              "description": "Optional priority filter.",
+              "type": "string",
+              "enum": [
+                "High",
+                "Med",
+                "Low"
+              ]
+            },
+            "risk": {
+              "description": "Optional risk filter.",
+              "type": "string",
+              "enum": [
+                "Low Risk",
+                "On Track",
+                "At Risk",
+                "Critical"
+              ]
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_goal",
+        "title": "Create a goal",
+        "description": "Create a new goal for the signed-in Momentum user. Momentum AI will structure milestones and monitor risk.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Short outcome-oriented title."
+            },
+            "category": {
+              "type": "string",
+              "minLength": 1,
+              "description": "e.g. Product, Fundraising, Marketing, Engineering, Personal, Operations."
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Target deadline as a human-readable string (e.g. 'Dec 15, 2026')."
+            },
+            "priority": {
+              "default": "Med",
+              "type": "string",
+              "enum": [
+                "High",
+                "Med",
+                "Low"
+              ]
+            },
+            "description": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "title",
+            "category",
+            "target"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_briefing",
+        "title": "Get executive briefing",
+        "description": "Return a synthesized briefing for the signed-in Momentum user: portfolio health, high-risk goals, and recommended focus areas.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
