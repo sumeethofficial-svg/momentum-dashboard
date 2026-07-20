@@ -14,6 +14,7 @@ const toneStyles: Record<Tone, string> = {
 
 export function MetricCards() {
   const { metrics } = useMomentum();
+  const hasGoals = metrics.activeGoals > 0;
 
   const cards: {
     label: string;
@@ -27,7 +28,7 @@ export function MetricCards() {
     {
       label: "Active Goals",
       value: String(metrics.activeGoals),
-      delta: "Live count",
+      delta: hasGoals ? "Live count" : "No goals yet",
       trend: "up",
       icon: Target,
       tone: "primary",
@@ -35,26 +36,26 @@ export function MetricCards() {
     },
     {
       label: "On-Track Rate",
-      value: `${metrics.onTrackRate}%`,
-      delta: "+6.4% vs last month",
+      value: metrics.onTrackRate === null ? "N/A" : `${metrics.onTrackRate}%`,
+      delta: hasGoals ? "+6.4% vs last month" : "Awaiting first goal",
       trend: "up",
       icon: TrendingUp,
       tone: "accent",
-      hint: "Pace ahead of forecast",
+      hint: hasGoals ? "Pace ahead of forecast" : "Create a goal to start tracking",
     },
     {
       label: "AI Risk Score",
-      value: `${metrics.riskScore} / 100`,
-      delta: "-8 pts since Monday",
+      value: metrics.riskScore === null ? "—" : `${metrics.riskScore} / 100`,
+      delta: hasGoals ? "-8 pts since Monday" : "Neutral",
       trend: "down",
       icon: ShieldAlert,
       tone: "warning",
-      hint: "Lower is safer",
+      hint: hasGoals ? "Lower is safer" : "No signals to analyze",
     },
     {
       label: "Upcoming Deadlines",
       value: String(metrics.upcoming),
-      delta: "Next in 3 days",
+      delta: hasGoals ? "Next in 3 days" : "None scheduled",
       trend: "up",
       icon: CalendarClock,
       tone: "danger",

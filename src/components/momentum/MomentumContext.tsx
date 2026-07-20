@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
 export type Priority = "High" | "Med" | "Low";
 export type Risk = "Low Risk" | "On Track" | "At Risk" | "Critical";
@@ -28,86 +28,6 @@ export type BriefingItem = {
 
 export type ViewKey = "dashboard" | "goals" | "assistant" | "analytics" | "settings";
 
-const initialGoals: Goal[] = [
-  {
-    id: "g1",
-    title: "Launch Q4 Enterprise Product Line",
-    category: "Product",
-    target: "Dec 15, 2026",
-    progress: 78,
-    priority: "High",
-    risk: "On Track",
-    insight: "AI recommends compressing QA cycle by 3 days.",
-  },
-  {
-    id: "g2",
-    title: "Close $2.4M Series A Bridge",
-    category: "Fundraising",
-    target: "Nov 02, 2026",
-    progress: 62,
-    priority: "High",
-    risk: "At Risk",
-    insight: "2 investor follow-ups pending — auto-drafted.",
-  },
-  {
-    id: "g3",
-    title: "Grow Newsletter to 25k Subscribers",
-    category: "Marketing",
-    target: "Jan 30, 2027",
-    progress: 44,
-    priority: "Med",
-    risk: "Low Risk",
-    insight: "Referral loop lifting weekly growth 12%.",
-  },
-  {
-    id: "g4",
-    title: "Ship AI Coach Beta to Design Partners",
-    category: "Engineering",
-    target: "Aug 22, 2026",
-    progress: 91,
-    priority: "High",
-    risk: "Low Risk",
-    insight: "Ready for staged rollout Friday.",
-  },
-  {
-    id: "g5",
-    title: "Complete Executive Coaching Program",
-    category: "Personal",
-    target: "Oct 10, 2026",
-    progress: 33,
-    priority: "Low",
-    risk: "Critical",
-    insight: "Missed 2 sessions — reschedule suggested.",
-  },
-];
-
-const initialBriefing: BriefingItem[] = [
-  {
-    id: "b1",
-    iconKey: "alert",
-    title: "Series A goal drifting",
-    body: "Draft follow-ups queued for 2 warm investors.",
-    time: "8m ago",
-    relatedGoalId: "g2",
-  },
-  {
-    id: "b2",
-    iconKey: "check",
-    title: "Beta launch cleared QA",
-    body: "All P0 tickets closed. Ready for Friday rollout.",
-    time: "42m ago",
-    relatedGoalId: "g4",
-  },
-  {
-    id: "b3",
-    iconKey: "clock",
-    title: "Coaching session rescheduled",
-    body: "Moved to Thursday 4pm — calendar synced.",
-    time: "1h ago",
-    relatedGoalId: "g5",
-  },
-];
-
 type Ctx = {
   goals: Goal[];
   briefing: BriefingItem[];
@@ -117,18 +37,53 @@ type Ctx = {
   updateGoal: (id: string, patch: Partial<Goal>) => void;
   metrics: {
     activeGoals: number;
-    onTrackRate: number;
-    riskScore: number;
+    onTrackRate: number | null;
+    riskScore: number | null;
     upcoming: number;
   };
 };
 
 const MomentumCtx = createContext<Ctx | null>(null);
 
-export function MomentumProvider({ children }: { children: ReactNode }) {
-  const [goals, setGoals] = useState<Goal[]>(initialGoals);
-  const [briefing] = useState<BriefingItem[]>(initialBriefing);
+const STORAGE_PREFIX = "momentum:goals:";
+
+function loadGoals(userId: string | null): Goal[] {
+  if (typeof window === "undefined" || !userId) return [];
+  try {
+    const raw = localStorage.getItem(STORAGE_PREFIX + userId);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as Goal[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function MomentumProvider({
+  children,
+  userId = null,
+}: {
+  children: ReactNode;
+  userId?: string | null;
+}) {
+  const [goals, setGoals] = useState<Goal[]>(() => loadGoals(userId));
+  const [briefing] = useState<BriefingItem[]>([]);
   const [view, setView] = useState<ViewKey>("dashboard");
+
+  // Reload when user changes
+  useEffect(() => {
+    setGoals(loadGoals(userId));
+  }, [userId]);
+
+  // Persist on change
+  useEffect(() => {
+    if (typeof window === "undefined" || !userId) return;
+    try {
+      localStorage.setItem(STORAGE_PREFIX + userId, JSON.stringify(goals));
+    } catch {
+      /* ignore quota errors */
+    }
+  }, [goals, userId]);
 
   const metrics = useMemo(() => {
     const total = goals.length;
@@ -139,13 +94,12 @@ export function MomentumProvider({ children }: { children: ReactNode }) {
       "At Risk": 60,
       Critical: 90,
     };
-    const riskScore = total
-      ? Math.round(goals.reduce((s, g) => s + riskWeight[g.risk], 0) / total)
-      : 0;
     return {
       activeGoals: total,
-      onTrackRate: total ? Math.round((onTrack / total) * 100) : 0,
-      riskScore,
+      onTrackRate: total ? Math.round((onTrack / total) * 100) : null,
+      riskScore: total
+        ? Math.round(goals.reduce((s, g) => s + riskWeight[g.risk], 0) / total)
+        : null,
       upcoming: goals.filter((g) => g.progress < 100).length,
     };
   }, [goals]);
