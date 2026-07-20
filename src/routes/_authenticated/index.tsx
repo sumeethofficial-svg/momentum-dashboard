@@ -10,10 +10,19 @@ import { AIBriefing } from "@/components/momentum/AIBriefing";
 import { CreateGoalModal } from "@/components/momentum/CreateGoalModal";
 import { AIRiskSheet, type InspectTarget } from "@/components/momentum/AIRiskSheet";
 import { CommandPalette } from "@/components/momentum/CommandPalette";
+import { WeeklySummaryDialog } from "@/components/momentum/WeeklySummaryDialog";
 import { MomentumProvider, useMomentum } from "@/components/momentum/MomentumContext";
 import { AnalyticsView, AssistantView, SettingsView } from "@/components/momentum/Views";
+import { useAuth } from "@/hooks/useAuth";
 
-export const Route = createFileRoute("/")({
+function greetingPrefix() {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 18) return "Good afternoon";
+  return "Good evening";
+}
+
+export const Route = createFileRoute("/_authenticated/")({
   component: Page,
 });
 
@@ -29,7 +38,7 @@ function Page() {
 const viewTitles: Record<string, { eyebrow: string; title: string; sub: string }> = {
   dashboard: {
     eyebrow: "Executive dashboard",
-    title: "Good morning, Alex.",
+    title: "__GREETING__",
     sub: "Here's where your goals stand — and what Momentum is handling for you today.",
   },
   goals: {
@@ -56,11 +65,20 @@ const viewTitles: Record<string, { eyebrow: string; title: string; sub: string }
 
 function Dashboard() {
   const { view, setView } = useMomentum();
+  const { firstName } = useAuth();
   const [createOpen, setCreateOpen] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
+  const [summaryOpen, setSummaryOpen] = useState(false);
   const [inspect, setInspect] = useState<InspectTarget | null>(null);
 
-  const header = viewTitles[view];
+  const rawHeader = viewTitles[view];
+  const header = {
+    ...rawHeader,
+    title:
+      rawHeader.title === "__GREETING__"
+        ? `${greetingPrefix()}, ${firstName}.`
+        : rawHeader.title,
+  };
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
@@ -137,7 +155,9 @@ function Dashboard() {
         open={cmdOpen}
         onOpenChange={setCmdOpen}
         onCreateGoal={() => setCreateOpen(true)}
+        onOpenSummary={() => setSummaryOpen(true)}
       />
+      <WeeklySummaryDialog open={summaryOpen} onOpenChange={setSummaryOpen} />
     </div>
   );
 }
