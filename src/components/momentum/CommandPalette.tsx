@@ -70,16 +70,7 @@ export function CommandPalette({
             <CalendarClock className="h-4 w-4 text-primary" />
             Reschedule drifting goals
           </CommandItem>
-          <CommandItem
-            onSelect={() =>
-              run(() =>
-                toast("Weekly summary ready", {
-                  description: "Momentum drafted a 5-bullet recap of this week's execution.",
-                  icon: <Sparkles className="h-4 w-4 text-primary" />,
-                }),
-              )
-            }
-          >
+          <CommandItem onSelect={() => run(onOpenSummary)}>
             <Sparkles className="h-4 w-4 text-accent" />
             Summarize this week
           </CommandItem>
