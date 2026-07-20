@@ -16,10 +16,12 @@ export function CommandPalette({
   open,
   onOpenChange,
   onCreateGoal,
+  onOpenSummary,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   onCreateGoal: () => void;
+  onOpenSummary: () => void;
 }) {
   const { goals, updateGoal, setView } = useMomentum();
 

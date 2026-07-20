@@ -155,7 +155,9 @@ function Dashboard() {
         open={cmdOpen}
         onOpenChange={setCmdOpen}
         onCreateGoal={() => setCreateOpen(true)}
+        onOpenSummary={() => setSummaryOpen(true)}
       />
+      <WeeklySummaryDialog open={summaryOpen} onOpenChange={setSummaryOpen} />
     </div>
   );
 }
