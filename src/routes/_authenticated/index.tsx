@@ -38,7 +38,7 @@ function Page() {
 const viewTitles: Record<string, { eyebrow: string; title: string; sub: string }> = {
   dashboard: {
     eyebrow: "Executive dashboard",
-    title: "Good morning, Alex.",
+    title: "__GREETING__",
     sub: "Here's where your goals stand — and what Momentum is handling for you today.",
   },
   goals: {
@@ -65,11 +65,20 @@ const viewTitles: Record<string, { eyebrow: string; title: string; sub: string }
 
 function Dashboard() {
   const { view, setView } = useMomentum();
+  const { firstName } = useAuth();
   const [createOpen, setCreateOpen] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
+  const [summaryOpen, setSummaryOpen] = useState(false);
   const [inspect, setInspect] = useState<InspectTarget | null>(null);
 
-  const header = viewTitles[view];
+  const rawHeader = viewTitles[view];
+  const header = {
+    ...rawHeader,
+    title:
+      rawHeader.title === "__GREETING__"
+        ? `${greetingPrefix()}, ${firstName}.`
+        : rawHeader.title,
+  };
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
