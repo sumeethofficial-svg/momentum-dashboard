@@ -13,7 +13,7 @@ import { CommandPalette } from "@/components/momentum/CommandPalette";
 import { MomentumProvider, useMomentum } from "@/components/momentum/MomentumContext";
 import { AnalyticsView, AssistantView, SettingsView } from "@/components/momentum/Views";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   component: Page,
 });
 
