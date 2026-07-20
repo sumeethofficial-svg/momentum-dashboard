@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Sparkles, Target } from "lucide-react";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -19,9 +20,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useMomentum, type Priority } from "./MomentumContext";
 
 const categories = ["Product", "Fundraising", "Marketing", "Engineering", "Personal", "Operations"];
-const priorities = ["High", "Med", "Low"] as const;
+const priorities: Priority[] = ["High", "Med", "Low"];
 
 export function CreateGoalModal({
   open,
@@ -30,14 +32,30 @@ export function CreateGoalModal({
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }) {
+  const { addGoal } = useMomentum();
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<string>("");
   const [deadline, setDeadline] = useState("");
-  const [priority, setPriority] = useState<string>("Med");
+  const [priority, setPriority] = useState<Priority>("Med");
   const [description, setDescription] = useState("");
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
+    const targetLabel = deadline
+      ? new Date(deadline).toLocaleDateString("en-US", {
+          month: "short",
+          day: "2-digit",
+          year: "numeric",
+        })
+      : "TBD";
+    addGoal({
+      title,
+      category: category || "Operations",
+      target: targetLabel,
+      priority,
+      description,
+    });
+    toast.success("Goal created", { description: title });
     onOpenChange(false);
     setTitle("");
     setCategory("");
