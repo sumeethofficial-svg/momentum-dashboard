@@ -9,28 +9,46 @@ import { lovable } from "@/integrations/lovable";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
+  validateSearch: (s: Record<string, unknown>) => ({
+    next: typeof s.next === "string" ? s.next : "",
+  }),
   component: AuthPage,
 });
 
+// Only allow same-origin relative paths so callers can't punt users to
+// arbitrary external URLs.
+function safeNext(raw: string): string {
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return "/";
+  return raw;
+}
+
 function AuthPage() {
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
+  const target = safeNext(next);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/", replace: true });
+      if (data.session) window.location.replace(target);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (session) navigate({ to: "/", replace: true });
+      if (session) window.location.replace(target);
     });
     return () => sub.subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, target]);
 
   async function signIn() {
     setBusy(true);
     try {
+      // Return the user to /auth with the same `next` so this route can
+      // forward them to the consent (or intended) URL once the session is set.
+      const redirectUri =
+        window.location.origin +
+        "/auth" +
+        (target !== "/" ? `?next=${encodeURIComponent(target)}` : "");
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+        redirect_uri: redirectUri,
       });
       if (result.error) {
         toast.error("Sign-in failed", { description: String(result.error) });
@@ -38,7 +56,7 @@ function AuthPage() {
         return;
       }
       if (result.redirected) return;
-      navigate({ to: "/", replace: true });
+      window.location.replace(target);
     } catch (err) {
       toast.error("Sign-in failed", { description: (err as Error).message });
       setBusy(false);
