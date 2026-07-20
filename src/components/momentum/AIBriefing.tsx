@@ -33,36 +33,44 @@ export function AIBriefing({
         </span>
       </div>
 
-      <p className="mt-4 text-sm leading-relaxed text-foreground/90">
-        You're pacing <span className="text-primary font-medium">+18% ahead</span> of quarterly plan.
-        Two goals need decisions today; I've prepared drafts and next steps.
-      </p>
+      {briefing.length === 0 ? (
+        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+          No signals yet. Once you create a goal, I'll surface risks, wins, and next actions here every morning.
+        </p>
+      ) : (
+        <>
+          <p className="mt-4 text-sm leading-relaxed text-foreground/90">
+            You're pacing <span className="text-primary font-medium">+18% ahead</span> of quarterly plan.
+            Two goals need decisions today; I've prepared drafts and next steps.
+          </p>
 
-      <ul className="mt-5 space-y-3">
-        {briefing.map((it) => {
-          const { icon: Icon, tone } = iconMap[it.iconKey];
-          return (
-            <li key={it.id}>
-              <button
-                type="button"
-                onClick={() => onInspect(it)}
-                className="flex w-full gap-3 rounded-md p-2 -m-2 text-left transition hover:bg-muted/40"
-              >
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${tone}`}>
-                  <Icon className="h-4 w-4" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="truncate text-sm font-medium">{it.title}</div>
-                    <div className="shrink-0 text-[10px] text-muted-foreground">{it.time}</div>
-                  </div>
-                  <p className="text-xs text-muted-foreground">{it.body}</p>
-                </div>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+          <ul className="mt-5 space-y-3">
+            {briefing.map((it) => {
+              const { icon: Icon, tone } = iconMap[it.iconKey];
+              return (
+                <li key={it.id}>
+                  <button
+                    type="button"
+                    onClick={() => onInspect(it)}
+                    className="flex w-full gap-3 rounded-md p-2 -m-2 text-left transition hover:bg-muted/40"
+                  >
+                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${tone}`}>
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="truncate text-sm font-medium">{it.title}</div>
+                        <div className="shrink-0 text-[10px] text-muted-foreground">{it.time}</div>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{it.body}</p>
+                    </div>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      )}
 
       <button
         onClick={onOpenAssistant}
