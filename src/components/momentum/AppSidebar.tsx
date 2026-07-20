@@ -1,8 +1,9 @@
 import { LayoutDashboard, Target, Sparkles, BarChart3, Settings, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useMomentum, type ViewKey } from "./MomentumContext";
 
-const nav = [
-  { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, active: true },
+const nav: { key: ViewKey; label: string; icon: typeof LayoutDashboard; badge?: string }[] = [
+  { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { key: "goals", label: "Goals", icon: Target },
   { key: "assistant", label: "AI Assistant", icon: Sparkles, badge: "New" },
   { key: "analytics", label: "Analytics", icon: BarChart3 },
@@ -10,6 +11,8 @@ const nav = [
 ];
 
 export function AppSidebar() {
+  const { view, setView } = useMomentum();
+
   return (
     <aside className="hidden md:flex md:w-64 shrink-0 flex-col border-r border-border bg-sidebar text-sidebar-foreground">
       <div className="flex h-16 items-center gap-2.5 px-6 border-b border-sidebar-border">
@@ -30,12 +33,14 @@ export function AppSidebar() {
         </div>
         {nav.map((item) => {
           const Icon = item.icon;
+          const active = view === item.key;
           return (
             <button
               key={item.key}
+              onClick={() => setView(item.key)}
               className={cn(
                 "group flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
-                item.active
+                active
                   ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
                   : "text-sidebar-foreground/75 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
               )}
@@ -43,7 +48,7 @@ export function AppSidebar() {
               <Icon
                 className={cn(
                   "h-4 w-4",
-                  item.active ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
+                  active ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
                 )}
               />
               <span className="flex-1 text-left">{item.label}</span>
@@ -68,7 +73,10 @@ export function AppSidebar() {
         <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
           3 optimizations queued for review this morning.
         </p>
-        <button className="mt-3 w-full rounded-md bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition">
+        <button
+          onClick={() => setView("assistant")}
+          className="mt-3 w-full rounded-md bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition"
+        >
           Review briefing
         </button>
       </div>

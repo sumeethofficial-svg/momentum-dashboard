@@ -2,19 +2,33 @@ import { Bell, Search, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export function TopBar({ onCreateGoal }: { onCreateGoal: () => void }) {
+export function TopBar({
+  onCreateGoal,
+  onOpenCommand,
+}: {
+  onCreateGoal: () => void;
+  onOpenCommand: () => void;
+}) {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border bg-background/70 px-4 md:px-8 backdrop-blur-xl">
-      <div className="relative hidden md:flex flex-1 max-w-md">
+      <button
+        onClick={onOpenCommand}
+        className="group relative hidden md:flex flex-1 max-w-md items-center rounded-md border border-input bg-muted/40 pl-9 pr-3 h-9 text-left text-sm text-muted-foreground hover:border-primary/40 hover:bg-muted/60 focus:outline-none focus:ring-2 focus:ring-ring/40 transition"
+      >
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <input
-          placeholder="Ask Momentum anything…"
-          className="h-9 w-full rounded-md border border-input bg-muted/40 pl-9 pr-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/40 transition"
-        />
+        <span className="truncate">Ask Momentum anything…</span>
         <kbd className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 hidden lg:inline-flex h-5 items-center rounded border border-border bg-background px-1.5 text-[10px] font-medium text-muted-foreground">
           ⌘K
         </kbd>
-      </div>
+      </button>
+
+      <button
+        onClick={onOpenCommand}
+        aria-label="Open command palette"
+        className="md:hidden flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground"
+      >
+        <Search className="h-4 w-4" />
+      </button>
 
       <div className="flex-1 md:hidden" />
 
