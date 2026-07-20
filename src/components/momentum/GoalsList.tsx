@@ -1,5 +1,6 @@
-import { CalendarDays, ChevronRight, Sparkles } from "lucide-react";
+import { CalendarDays, ChevronRight, Plus, Sparkles, Target } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useMomentum, type Goal, type Priority, type Risk } from "./MomentumContext";
 
@@ -18,17 +19,47 @@ const riskStyle: Record<Risk, string> = {
 
 export function GoalsList({
   onInspect,
+  onCreate,
   limit,
   title = "Active Goals",
   subtitle = "Prioritized by AI impact score · updated 2 min ago",
 }: {
   onInspect: (goal: Goal) => void;
+  onCreate?: () => void;
   limit?: number;
   title?: string;
   subtitle?: string;
 }) {
   const { goals } = useMomentum();
   const rows = typeof limit === "number" ? goals.slice(0, limit) : goals;
+
+  if (goals.length === 0) {
+    return (
+      <div className="rounded-xl border border-dashed border-border bg-card/60 shadow-elevated">
+        <div className="flex flex-col items-center justify-center gap-4 px-6 py-16 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-primary shadow-glow">
+            <Target className="h-6 w-6 text-primary-foreground" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-lg font-semibold tracking-tight">No active goals yet</h3>
+            <p className="max-w-sm text-sm text-muted-foreground">
+              Momentum is standing by. Create your first goal and I'll structure milestones,
+              forecast risk, and start executing alongside you.
+            </p>
+          </div>
+          {onCreate && (
+            <Button
+              onClick={onCreate}
+              className="bg-gradient-primary text-primary-foreground shadow-glow hover:opacity-90"
+            >
+              <Plus className="h-4 w-4" />
+              Create Your First Goal
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-xl border border-border bg-card shadow-elevated">

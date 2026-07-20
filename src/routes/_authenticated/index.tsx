@@ -27,8 +27,9 @@ export const Route = createFileRoute("/_authenticated/")({
 });
 
 function Page() {
+  const { user } = useAuth();
   return (
-    <MomentumProvider>
+    <MomentumProvider userId={user?.id ?? null}>
       <Dashboard />
       <Toaster />
     </MomentumProvider>
@@ -126,6 +127,7 @@ function Dashboard() {
                 </div>
                 <GoalsList
                   onInspect={(g) => setInspect({ kind: "goal", goalId: g.id })}
+                  onCreate={() => setCreateOpen(true)}
                 />
               </>
             )}
@@ -133,6 +135,7 @@ function Dashboard() {
             {view === "goals" && (
               <GoalsList
                 onInspect={(g) => setInspect({ kind: "goal", goalId: g.id })}
+                onCreate={() => setCreateOpen(true)}
                 title="All goals"
                 subtitle="Full portfolio · click any goal to inspect AI analysis."
               />
