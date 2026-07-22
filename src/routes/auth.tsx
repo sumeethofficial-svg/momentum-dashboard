@@ -41,22 +41,51 @@ function AuthPage() {
   async function signIn() {
     setBusy(true);
     try {
-      // Return the user to /auth with the same `next` so this route can
-      // forward them to the consent (or intended) URL once the session is set.
-      const redirectUri =
+      const host = window.location.hostname;
+      // Lovable's managed broker only whitelists lovable.app / lovable.dev
+      // origins (and localhost during editor preview). Everywhere else — e.g.
+      // vercel.app, custom domains, self-hosted — go through Supabase's
+      // standard OAuth redirect flow, which returns to /auth/callback.
+      const isLovableHost =
+        host === "localhost" ||
+        host === "127.0.0.1" ||
+        host.endsWith(".lovable.app") ||
+        host.endsWith(".lovable.dev");
+
+      if (isLovableHost) {
+        const redirectUri =
+          window.location.origin +
+          "/auth" +
+          (target !== "/" ? `?next=${encodeURIComponent(target)}` : "");
+        const result = await lovable.auth.signInWithOAuth("google", {
+          redirect_uri: redirectUri,
+        });
+        if (result.error) {
+          toast.error("Sign-in failed", { description: String(result.error) });
+          setBusy(false);
+          return;
+        }
+        if (result.redirected) return;
+        window.location.replace(target);
+        return;
+      }
+
+      // External host (Vercel, custom domain): use Supabase's OAuth redirect.
+      // The Vercel origin MUST be added to Supabase's redirect allow-list.
+      const callback =
         window.location.origin +
-        "/auth" +
+        "/auth/callback" +
         (target !== "/" ? `?next=${encodeURIComponent(target)}` : "");
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: redirectUri,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: callback },
       });
-      if (result.error) {
-        toast.error("Sign-in failed", { description: String(result.error) });
+      if (error) {
+        toast.error("Sign-in failed", { description: error.message });
         setBusy(false);
         return;
       }
-      if (result.redirected) return;
-      window.location.replace(target);
+      // Browser will redirect to Google.
     } catch (err) {
       toast.error("Sign-in failed", { description: (err as Error).message });
       setBusy(false);
