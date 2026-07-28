@@ -34,11 +34,15 @@ GOOGLE_OAUTH_CLIENT_SECRET=your_google_client_secret
 # AI Engine
 GEMINI_API_KEY=your_gemini_api_key
 
-
 4. Local DevelopmentRun the local development server:Bashnpm run dev
 Open http://localhost:5173 in your browser.
 
-📦 Deployment on VercelPush your latest code to your GitHub repository.Connect your repository to Vercel.Add the environment variables listed above in Vercel Project Settings $\rightarrow$ Environment Variables.Ensure vercel.json is present in your root directory to handle SPA rewrites:JSON{
+📦 Deployment on VercelPush your latest code to your GitHub repository.
+
+Connect your repository to Vercel.Add the environment variables listed above in Vercel Project Settings $\rightarrow$ Environment Variables.Ensure vercel.json is present in your root directory to handle SPA rewrites:
+
+
+JSON{
   "rewrites": [
     {
       "source": "/(.*)",
@@ -46,4 +50,9 @@ Open http://localhost:5173 in your browser.
     }
   ]
 }
-🤝 ContributingContributions, issues, and feature requests are welcome! Feel free to check the issues tab.📄 LicenseThis project is licensed under the MIT License.
+
+
+🤝 ContributingContributions, issues, and feature requests are welcome! Feel free to check the issues tab.
+
+
+📄 LicenseThis project is licensed under the MIT License.
