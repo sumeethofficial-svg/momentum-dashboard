@@ -42,8 +42,11 @@ Open http://localhost:5173 in your browser.
 Connect your repository to Vercel.Add the environment variables listed above in Vercel Project Settings $\rightarrow$ Environment Variables.Ensure vercel.json is present in your root directory to handle SPA rewrites:
 
 
-JSON{
+JSON
+
+{
   "rewrites": [
+  
     {
       "source": "/(.*)",
       "destination": "/index.html"
