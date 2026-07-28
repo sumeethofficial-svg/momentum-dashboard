@@ -9,10 +9,15 @@
 
 🔐 Secure OAuth Authentication: End-to-end user authentication with Google OAuth powered by Supabase.
 
-⚡ Production-Ready SSR: Optimized rendering with React hydration handling, custom error boundaries, and SPA fallback routing.🛠️ Tech StackFrontend: React 19, TypeScript, Tailwind CSS, Lucide React, RechartsBackend & Auth: Supabase (PostgreSQL Database, Google OAuth)AI Engine: Google Gemini APIDeployment: Vercel
+⚡ Production-Ready SSR: Optimized rendering with React hydration handling, custom error boundaries, and SPA fallback routing.
 
 
-🚀 Getting Started1. PrerequisitesEnsure you have the following installed on your machine:Node.js (v18.x or higher)npm or pnpm2. InstallationClone the repository and install dependencies:Bashgit clone https://github.com/sumeethofficial-svg/momentum-dashboard.git
+🛠️ Tech StackFrontend: React 19, TypeScript, Tailwind CSS, Lucide React, RechartsBackend & Auth: Supabase (PostgreSQL Database, Google OAuth)AI Engine: Google Gemini APIDeployment: Vercel
+
+
+🚀 Getting Started
+1. PrerequisitesEnsure you have the following installed on your machine:Node.js (v18.x or higher)npm or pnpm
+2. 2. InstallationClone the repository and install dependencies:Bashgit clone https://github.com/sumeethofficial-svg/momentum-dashboard.git
 cd momentum-dashboard
 npm install
 3. Environment VariablesCreate a .env.local file in the root directory and configure the following keys:Code snippet# Supabase Configuration
