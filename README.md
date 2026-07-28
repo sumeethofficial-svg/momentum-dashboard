@@ -2,10 +2,17 @@
 
 ✨ Key Features
 📊 Executive Dashboard: Live velocity metrics, execution charts, and on-track completion rates built with Recharts.
+
 🎯 Dynamic Goal Planning: Interactive task breakdown, milestone tracking, and autonomous execution modes.
+
 🤖 AI Risk Analyzer: Integrated with Google Gemini API to analyze project drift and forecast potential delays before they occur.
+
 🔐 Secure OAuth Authentication: End-to-end user authentication with Google OAuth powered by Supabase.
-⚡ Production-Ready SSR: Optimized rendering with React hydration handling, custom error boundaries, and SPA fallback routing.🛠️ Tech StackFrontend: React 19, TypeScript, Tailwind CSS, Lucide React, RechartsBackend & Auth: Supabase (PostgreSQL Database, Google OAuth)AI Engine: Google Gemini APIDeployment: Vercel🚀 Getting Started1. PrerequisitesEnsure you have the following installed on your machine:Node.js (v18.x or higher)npm or pnpm2. InstallationClone the repository and install dependencies:Bashgit clone https://github.com/sumeethofficial-svg/momentum-dashboard.git
+
+⚡ Production-Ready SSR: Optimized rendering with React hydration handling, custom error boundaries, and SPA fallback routing.🛠️ Tech StackFrontend: React 19, TypeScript, Tailwind CSS, Lucide React, RechartsBackend & Auth: Supabase (PostgreSQL Database, Google OAuth)AI Engine: Google Gemini APIDeployment: Vercel
+
+
+🚀 Getting Started1. PrerequisitesEnsure you have the following installed on your machine:Node.js (v18.x or higher)npm or pnpm2. InstallationClone the repository and install dependencies:Bashgit clone https://github.com/sumeethofficial-svg/momentum-dashboard.git
 cd momentum-dashboard
 npm install
 3. Environment VariablesCreate a .env.local file in the root directory and configure the following keys:Code snippet# Supabase Configuration
